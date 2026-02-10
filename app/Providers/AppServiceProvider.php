@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\AI\AIClientInterface;
 use App\Services\AI\FakeAIClient;
+use App\Services\AI\OpenAIClient;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,10 +14,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(
-            AIClientInterface::class,
-            FakeAIClient::class
-        );
+        if ($this->app->environment('testing')) {
+            $this->app->bind(AIClientInterface::class, FakeAIClient::class);
+        } else {
+            $this->app->bind(AIClientInterface::class, OpenAIClient::class);
+        }
     }
 
     /**
